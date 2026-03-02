@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Financeira</title>
+</head>
+
+<body>
+
+    <label for="iProducao">Qual a Capacidade de Produção de sua Case Packer?</label>
+    <br>
+    <input type="text" id="iProducao"> por Minuto
+    <br><br>
+
+    <label for="iJornada">Qual a Duração de cada Jornada de Trabalho em sua Fábrica?</label>
+    <br>
+    <input type="text" id="iJornada"> Horas Por Dia
+    <br><br>
+
+    <label for="iLatas">Quantas Latas são Realmente Produzidas por Mês?</label>
+    <br>
+    <input type="text" id="iLatas"> Latas Por Mes
+    <br><br>
+
+    <label for="iLucro">Qual o seu Lucro Líquido Estimado por Lata?</label>
+    <br>
+    <input type="text" id="iLucro"> por Lata
+    <br><br>
+
+    <label for="iConsumo">Qual o Consumo em KwH de sua Case Packer?</label>
+    <br>
+    <input type="text" id="iConsumo"> Kwh
+    <br><br>
+
+    <label for="iCusto">Quanto é o seu Custo por KwH?</label>
+    <br>
+    R$ <input type="text" id="iCusto"> reais
+    <br><br>
+
+    <button onclick="calcularDia()">Perca em 1 Dia</button>
+    <button onclick="calcularSemana()">Perca em 1 Semana</button>
+    <button onclick="calcularMes()">Perca em 1 Mês</button>
+    <button onclick="calcularAno()">Perca em 1 Ano</button>
+
+    <br>
+    <p id="pQuantoPerdeu"></p>
+
+</body>
+</html>
+
+<script>
+    function calcularDia(){
+    let producaoMinuto = Number(iProducao.value);
+    let horasJornada = Number(iJornada.value);
+    let latasMesReal = Number(iLatas.value);
+    let lucroPorLata = Number(iLucro.value);
+    let consumoKW = Number(iConsumo.value);
+    let custoKWh = Number(iCusto.value);
+
+    if (isNaN(producaoMinuto) || isNaN(horasJornada) || isNaN(latasMesReal)) {
+        alert("Por favor, preencha todos os campos apenas com números.");
+        return;
+    }
+
+    let diasUteisMes = 22; 
+    let producaoRealDiaria = latasMesReal / diasUteisMes;
+    let producaoTeoricaDiaria = producaoMinuto * 60 * horasJornada;
+    let gapTotalLatas = producaoTeoricaDiaria - producaoRealDiaria;
+
+    if (gapTotalLatas <= 0) {
+        alert("Sua produção real está perfeita ou os dados estão incorretos. Não há perdas!");
+        return;
+    }
+
+    let porcentagemTravamento = 0.30; 
+    let latasPerdidasPorTravamento = gapTotalLatas * porcentagemTravamento;
+
+    let lucroPerdidoDia = latasPerdidasPorTravamento * lucroPorLata;
+
+    let tempoPerdidoHoras = latasPerdidasPorTravamento / (producaoMinuto * 60);
+    let energiaDesperdicadaDia = tempoPerdidoHoras * consumoKW * custoKWh;
+
+    let prejuizoTotalDia = lucroPerdidoDia + energiaDesperdicadaDia;
+
+    pQuantoPerdeu.innerHTML = `Devido a micro travamentos, você perde <strong>R$ ${prejuizoTotalDia.toFixed(2)}</strong> TODOS OS DIAS.`
+    
+    return prejuizoTotalDia;
+}
+
+    function calcularSemana(){
+        let perdidoPorDia = calcularDia()
+        let perdidoPorSemana = perdidoPorDia * 5;
+        
+        pQuantoPerdeu.innerHTML += `<br>Devido a micro travamentos, você perde <strong>R$ ${perdidoPorSemana.toFixed(2)}</strong> TODAS AS SEMANAS.`
+        
+        return perdidoPorSemana;
+    }
+    
+    function calcularMes(){
+        let perdidoPorSemana = calcularSemana();
+        let perdidoPorMes = perdidoPorSemana * 4;
+        
+        pQuantoPerdeu.innerHTML += `<br>Devido a micro travamentos, você perde <strong>R$ ${perdidoPorMes.toFixed(2)}</strong> TODOS OS MESES.`
+        
+        return perdidoPorMes;
+    }
+    
+    function calcularAno(){
+        let perdidoPorMes = calcularMes();
+        let perdidoPorAno = perdidoPorMes * 12;
+        
+        pQuantoPerdeu.innerHTML += `<br>Devido a micro travamentos, você perde <strong>R$ ${perdidoPorAno.toFixed(2)}</strong> TODOS OS ANOS.`
+        
+        return perdidoPorAno;
+    }
+</script>
